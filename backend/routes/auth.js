@@ -7,15 +7,15 @@ const router = express.Router();
 const JWT_SECRET = 'you are welcome';
 
 router.post('/register', async (req,res)=>{
-    const {username, password} = req.body;
+    const {username, email, password} = req.body;
     try{
-        let user = await User.findOne({ username});
+        let user = await User.findOne({ $or: [{ username }, { email }] });
         if(user)
         {
-            return res.status(400).json({message: 'User already Exists'});
+            return res.status(400).json({message: 'Username or email already exists'});
         }
 
-        user = new User({username, password});
+        user = new User({username, email, password});
         await user.save();
         res.status(201).json({ message: 'User registered' });
     }
